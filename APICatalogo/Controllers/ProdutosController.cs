@@ -17,18 +17,19 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Produto>> Get()
+        public async Task<ActionResult<IEnumerable<Produto>>> Get()
         {
-            var produtos = _context.Produtos.AsNoTracking().ToList();
-            if (produtos is null) { return NotFound("Produtos não encontrados."); }
-            return produtos;
+            return await _context.Produtos.AsNoTracking().ToListAsync();
         }
 
         [HttpGet("{id:int}", Name = "ObterProduto")]
-        public ActionResult<Produto> Get(int id)
+        public async Task<ActionResult<Produto>> Get(int id)
         {
-            var findProduto = _context.Produtos.FirstOrDefault(p => p.ProdutoId == id);
-            if (findProduto is null) { return NotFound("Produto não encontrado."); }
+            var findProduto = await _context.Produtos.AsNoTracking()
+                .FirstOrDefaultAsync(p => p.ProdutoId == id);
+            if (findProduto is null)
+                return NotFound("Produto não encontrado.");
+
             return findProduto;
         }
 
