@@ -1,0 +1,5 @@
+Information: 20101 - Executed DbCommand (30ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT `c`.`CategoriaId`, `c`.`ImagemUrl`, `c`.`Nome`, `p`.`ProdutoId`, `p`.`CategoriaId`, `p`.`DataCadastro`, `p`.`Descricao`, `p`.`Estoque`, `p`.`ImagemUrl`, `p`.`Nome`, `p`.`Preco`
+FROM `Categorias` AS `c`
+LEFT JOIN `Produtos` AS `p` ON `c`.`CategoriaId` = `p`.`CategoriaId`
+ORDER BY `c`.`CategoriaId`
