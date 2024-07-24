@@ -1,7 +1,8 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.Models;
+using APICatalogo.Repositories.Interfaces;
 
-namespace APICatalogo.Repositories
+namespace APICatalogo.Repositories.Implementations
 {
     //Herda de repositoru e implementa ICategoriaRepository
     public class CategoriaRepository : Repository<Categoria>, ICategoriaRepository

@@ -1,7 +1,8 @@
 ﻿using APICatalogo.Context;
+using APICatalogo.Repositories.Interfaces;
 using System.Linq.Expressions;
 
-namespace APICatalogo.Repositories
+namespace APICatalogo.Repositories.Implementations
 {
     public class Repository<T> : IRepository<T> where T : class
     {

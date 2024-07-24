@@ -1,7 +1,8 @@
 using APICatalogo.Context;
 using APICatalogo.Filters;
 using APICatalogo.Logging;
-using APICatalogo.Repositories;
+using APICatalogo.Repositories.Implementations;
+using APICatalogo.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 

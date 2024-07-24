@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace APICatalogo.Repositories
+namespace APICatalogo.Repositories.Interfaces
 {
     //Repositório genérico
     public interface IRepository<T>
