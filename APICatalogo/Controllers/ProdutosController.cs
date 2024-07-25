@@ -14,20 +14,20 @@ public class ProdutosController : ControllerBase
     Não é necessário implementar o IRepository nesse caso pois o repositório específico (IProdutoRepository) também
     implementa o repositório genérico por padrão
      */
-    private readonly IProdutoRepository _produtoRepository;
-    private readonly IRepository<Produto> _repository;
+
+    private readonly IUnityOfWork _uof;
     private readonly ILogger<CategoriasController> _logger;
 
-    public ProdutosController(IRepository<Produto> repository, IProdutoRepository produtoRepository)
+    public ProdutosController(IUnityOfWork uof, ILogger<CategoriasController> logger)
     {
-        _repository = repository;
-        _produtoRepository = produtoRepository;
+        _uof = uof;
+        _logger = logger;
     }
 
     [HttpGet("produtos/{id}")]
     public ActionResult<IEnumerable<Produto>> GetProdutosPorCategoria(int id)
     {
-        var produtos = _produtoRepository.GetProdutosPorCategoria(id);
+        var produtos = _uof.ProdutoRepository.GetProdutosPorCategoria(id);
 
         if (produtos is null)
         {
@@ -39,7 +39,7 @@ public class ProdutosController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<Produto>> Get()
     {
-        var produtos = _repository.GetAll();
+        var produtos = _uof.ProdutoRepository.GetAll();
         if (produtos is null)
         {
             return NotFound();
@@ -50,7 +50,7 @@ public class ProdutosController : ControllerBase
     [HttpGet("{id}", Name = "ObterProduto")]
     public ActionResult<Produto> Get(int id)
     {
-        var produto = _repository.Get(c => c.CategoriaId == id); // Um critério foi definido para a busca do produto
+        var produto = _uof.ProdutoRepository.Get(c => c.CategoriaId == id); // Um critério foi definido para a busca do produto
         if (produto is null)
         {
             return NotFound("Produto não encontrado...");
@@ -64,7 +64,8 @@ public class ProdutosController : ControllerBase
         if (produto is null)
             return BadRequest();
 
-        var novoProduto = _repository.Create(produto);
+        var novoProduto = _uof.ProdutoRepository.Create(produto);
+        _uof.Commit();
 
         return new CreatedAtRouteResult("ObterProduto",
             new { id = produto.ProdutoId }, novoProduto);
@@ -78,7 +79,8 @@ public class ProdutosController : ControllerBase
             return BadRequest(); //400
         }
 
-        var produtoAtualizado = _produtoRepository.Update(produto);
+        var produtoAtualizado = _uof.ProdutoRepository.Update(produto);
+        _uof.Commit();
 
         return Ok(produto);
     }
@@ -86,7 +88,7 @@ public class ProdutosController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult Delete(int id)
     {
-        var produto = _repository.Get(p => p.ProdutoId == id);
+        var produto = _uof.ProdutoRepository.Get(p => p.ProdutoId == id);
 
         if (produto == null)
         {
@@ -94,8 +96,10 @@ public class ProdutosController : ControllerBase
             return NotFound($"Produto com id={id} não encontrado...");
         }
 
-        var produtoExcluido = _repository.Delete(produto);
-        return Ok(produtoExcluido);
+        var produtoExcluido = _uof.ProdutoRepository.Delete(produto);
+        _uof.Commit();
 
+
+        return Ok(produtoExcluido);
     }
 }
