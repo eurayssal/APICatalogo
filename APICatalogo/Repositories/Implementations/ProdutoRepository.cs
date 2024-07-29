@@ -1,5 +1,6 @@
 ﻿using APICatalogo.Context;
 using APICatalogo.Models;
+using APICatalogo.Pagination;
 using APICatalogo.Repositories.Interfaces;
 
 namespace APICatalogo.Repositories.Implementations
@@ -8,6 +9,15 @@ namespace APICatalogo.Repositories.Implementations
     {
         public ProdutoRepository(AppDbContext context) : base(context)
         {
+        }
+
+        public IEnumerable<Produto> GetProdutos(ProdutosParameters produtosParameters)
+        {
+            return GetAll()
+                .OrderBy(x => x.Nome)
+                .Skip((produtosParameters.PageNumber - 1) * produtosParameters.PageSize)
+                .Take(produtosParameters.PageSize)
+                .ToList();
         }
 
         public IEnumerable<Produto> GetProdutosPorCategoria(int id)
