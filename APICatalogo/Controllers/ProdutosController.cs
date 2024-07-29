@@ -1,5 +1,7 @@
 ﻿using APICatalogo.DTOs;
+using APICatalogo.Models;
 using APICatalogo.Repositories.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APICatalogo.Controllers;
@@ -16,11 +18,13 @@ public class ProdutosController : ControllerBase
      */
 
     private readonly IUnityOfWork _uof;
+    private readonly IMapper _mapper;
     private readonly ILogger<CategoriasController> _logger;
 
-    public ProdutosController(IUnityOfWork uof, ILogger<CategoriasController> logger)
+    public ProdutosController(IUnityOfWork uof, IMapper mapper, ILogger<CategoriasController> logger)
     {
         _uof = uof;
+        _mapper = mapper;
         _logger = logger;
     }
 
@@ -33,7 +37,11 @@ public class ProdutosController : ControllerBase
         {
             return NotFound();
         }
-        return Ok(produtos);
+
+        //var destino = _mapper.Map<Destino>(origem)
+        var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
+
+        return Ok(produtosDto);
     }
 
     [HttpGet]
@@ -44,7 +52,10 @@ public class ProdutosController : ControllerBase
         {
             return NotFound();
         }
-        return Ok(produtos);
+
+        var produtosDto = _mapper.Map<IEnumerable<ProdutoDTO>>(produtos);
+
+        return Ok(produtosDto);
     }
 
     [HttpGet("{id}", Name = "ObterProduto")]
@@ -55,7 +66,10 @@ public class ProdutosController : ControllerBase
         {
             return NotFound("Produto não encontrado...");
         }
-        return produto;
+
+        var produtoDto = _mapper.Map<ProdutoDTO>(produto);
+
+        return produtoDto;
     }
 
     [HttpPost]
@@ -64,11 +78,15 @@ public class ProdutosController : ControllerBase
         if (produtoDto is null)
             return BadRequest();
 
-        var novoProduto = _uof.ProdutoRepository.Create(produtoDto);
+        var produto = _mapper.Map<Produto>(produtoDto);
+
+        var novoProduto = _uof.ProdutoRepository.Create(produto);
         _uof.Commit();
 
+        var novoProdutoDto = _mapper.Map<ProdutoDTO>(novoProduto);
+
         return new CreatedAtRouteResult("ObterProduto",
-            new { id = produtoDto.ProdutoId }, novoProduto);
+            new { id = produtoDto.ProdutoId }, novoProdutoDto);
     }
 
     [HttpPut("{id:int}")]
@@ -79,10 +97,14 @@ public class ProdutosController : ControllerBase
             return BadRequest(); //400
         }
 
-        var produtoAtualizado = _uof.ProdutoRepository.Update(produtoDto);
+        var produto = _mapper.Map<Produto>(produtoDto);
+
+        var produtoAtualizado = _uof.ProdutoRepository.Update(produto);
         _uof.Commit();
 
-        return Ok(produtoDto);
+        var produtoDtoAtualizado = _mapper.Map<ProdutoDTO>(produtoAtualizado);
+
+        return Ok(produtoDtoAtualizado);
     }
 
     [HttpDelete("{id:int}")]
@@ -99,7 +121,9 @@ public class ProdutosController : ControllerBase
         var produtoExcluido = _uof.ProdutoRepository.Delete(produto);
         _uof.Commit();
 
+        var produtoExcluidoDto = _mapper.Map<ProdutoDTO>(produtoExcluido);
 
-        return Ok(produtoExcluido);
+
+        return Ok(produtoExcluidoDto);
     }
 }
