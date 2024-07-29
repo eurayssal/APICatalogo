@@ -55,3 +55,35 @@ FROM `Produtos` AS `p`
 Information: 20101 - Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
 SELECT `p`.`ProdutoId`, `p`.`CategoriaId`, `p`.`DataCadastro`, `p`.`Descricao`, `p`.`Estoque`, `p`.`ImagemUrl`, `p`.`Nome`, `p`.`Preco`
 FROM `Produtos` AS `p`
+Information: 20101 - Executed DbCommand (29ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT `c`.`CategoriaId`, `c`.`ImagemUrl`, `c`.`Nome`
+FROM `Categorias` AS `c`
+Information: 20101 - Executed DbCommand (31ms) [Parameters=[@p0='?' (Size = 300), @p1='?' (Size = 80)], CommandType='Text', CommandTimeout='30']
+INSERT INTO `Categorias` (`ImagemUrl`, `Nome`)
+VALUES (@p0, @p1);
+SELECT `CategoriaId`
+FROM `Categorias`
+WHERE ROW_COUNT() = 1 AND `CategoriaId` = LAST_INSERT_ID();
+Information: 20101 - Executed DbCommand (2ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT `c`.`CategoriaId`, `c`.`ImagemUrl`, `c`.`Nome`
+FROM `Categorias` AS `c`
+WHERE `c`.`CategoriaId` = @__id_0
+LIMIT 1
+Information: 20101 - Executed DbCommand (6ms) [Parameters=[@p2='?' (DbType = Int32), @p0='?' (Size = 300), @p1='?' (Size = 80)], CommandType='Text', CommandTimeout='30']
+SET AUTOCOMMIT = 1;
+UPDATE `Categorias` SET `ImagemUrl` = @p0, `Nome` = @p1
+WHERE `CategoriaId` = @p2;
+SELECT ROW_COUNT();
+Information: 20101 - Executed DbCommand (1ms) [Parameters=[@__id_0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SELECT `c`.`CategoriaId`, `c`.`ImagemUrl`, `c`.`Nome`
+FROM `Categorias` AS `c`
+WHERE `c`.`CategoriaId` = @__id_0
+LIMIT 1
+Information: 20101 - Executed DbCommand (5ms) [Parameters=[@p0='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+SET AUTOCOMMIT = 1;
+DELETE FROM `Categorias`
+WHERE `CategoriaId` = @p0;
+SELECT ROW_COUNT();
+Information: 20101 - Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT `c`.`CategoriaId`, `c`.`ImagemUrl`, `c`.`Nome`
+FROM `Categorias` AS `c`
