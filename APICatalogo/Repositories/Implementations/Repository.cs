@@ -13,18 +13,20 @@ namespace APICatalogo.Repositories.Implementations
             _context = context;
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return _context.Set<T>().AsNoTracking().ToList();
+            return await _context.Set<T>()
+                                 .AsNoTracking()
+                                 .ToListAsync();
             /*
              AsNoTracking => Faz com que o estado nao seja mais gerenciado na memoria
             Se eu precisar de fazer algo após a exclusão (mudança de estado) nao posso usar isso
             */
         }
 
-        public T? Get(Expression<Func<T, bool>> predicate)
+        public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
         {
-            return _context.Set<T>().FirstOrDefault(predicate);
+            return await _context.Set<T>().FirstOrDefaultAsync(predicate);
         }
 
         public T Create(T entity)

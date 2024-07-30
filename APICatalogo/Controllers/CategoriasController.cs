@@ -25,7 +25,7 @@ public class CategoriasController : ControllerBase
     [HttpGet]
     public ActionResult<IEnumerable<CategoriaDTO>> Get()
     {
-        var categorias = _uof.CategoriaRepository.GetAll();
+        var categorias = _uof.CategoriaRepository.GetAllAsync();
 
         //Trecho substituido por => var categoriasDto = categorias.ToCategoriaDTOList();
         //var categoriasDto = new List<CategoriaDTO>();
@@ -95,7 +95,7 @@ public class CategoriasController : ControllerBase
     [HttpGet("{id:int}", Name = "ObterCategoria")]
     public ActionResult<CategoriaDTO> Get(int id)
     {
-        var categoria = _uof.CategoriaRepository.Get(c => c.CategoriaId == id);
+        var categoria = _uof.CategoriaRepository.GetAsync(c => c.CategoriaId == id);
 
         if (categoria is null)
         {
@@ -185,7 +185,7 @@ public class CategoriasController : ControllerBase
     [HttpDelete("{id:int}")]
     public ActionResult<CategoriaDTO> Delete(int id)
     {
-        var categoria = _uof.CategoriaRepository.Get(c => c.CategoriaId == id);
+        var categoria = _uof.CategoriaRepository.GetAsync(c => c.CategoriaId == id);
 
         if (categoria == null)
         {
