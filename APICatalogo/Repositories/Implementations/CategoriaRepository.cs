@@ -17,27 +17,29 @@ namespace APICatalogo.Repositories.Implementations
         {
         }
 
-        public PagedList<Categoria> GetCategorias(CategoriasParameters categoriasParameters)
+        public async Task<PagedList<Categoria>> GetCategoriasAsync(CategoriasParameters categoriasParameters)
         {
-            var categorias = GetAll()
-                            .OrderBy(o => o.CategoriaId)
-                            .AsQueryable();
+            var categorias = await GetAllAsync();
 
-            var categoriasOrdenadas = PagedList<Categoria>.ToPagedList(categorias, categoriasParameters.PageNumber, categoriasParameters.PageSize);
+            var categoriasOrdenadas = categorias.OrderBy(o => o.CategoriaId)
+                                                .AsQueryable();
 
-            return categoriasOrdenadas;
+
+            var resultado = PagedList<Categoria>.ToPagedList(categoriasOrdenadas, categoriasParameters.PageNumber, categoriasParameters.PageSize);
+
+            return resultado;
         }
 
-        public PagedList<Categoria> GetCategoriasFiltroNome(CategoriasFiltroNome categoriasFiltroNome)
+        public async Task<PagedList<Categoria>> GetCategoriasFiltroNomeAsync(CategoriasFiltroNome categoriasFiltroNome)
         {
-            var categorias = GetAll().AsQueryable();
+            var categorias = await GetAllAsync();
 
             if (!string.IsNullOrEmpty(categoriasFiltroNome.Nome))
             {
                 categorias = categorias.Where(w => w.Nome.Contains(categoriasFiltroNome.Nome));
             }
 
-            var categoriasFiltradas = PagedList<Categoria>.ToPagedList(categorias, categoriasFiltroNome.PageSize, categoriasFiltroNome.PageNumber);
+            var categoriasFiltradas = PagedList<Categoria>.ToPagedList(categorias.AsQueryable(), categoriasFiltroNome.PageSize, categoriasFiltroNome.PageNumber);
 
             return categoriasFiltradas;
         }

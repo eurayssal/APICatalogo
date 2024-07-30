@@ -23,31 +23,21 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<CategoriaDTO>> Get()
+    public async Task<ActionResult<IEnumerable<CategoriaDTO>>> GetAsync()
     {
-        var categorias = _uof.CategoriaRepository.GetAllAsync();
+        var categorias = await _uof.CategoriaRepository.GetAllAsync();
 
-        //Trecho substituido por => var categoriasDto = categorias.ToCategoriaDTOList();
-        //var categoriasDto = new List<CategoriaDTO>();
-        //foreach (var categoria in categorias)
-        //{
-        //    var categoriaDto = new CategoriaDTO
-        //    {
-        //        CategoriaId = categoria.CategoriaId,
-        //        Nome = categoria.Nome,
-        //        ImagemUrl = categoria.ImagemUrl,
-        //    };
-        //    categoriasDto.Add(categoriaDto);
-        //}
+        if (categorias is null)
+            return NotFound("Não existem categorias...");
 
         var categoriasDto = categorias.ToCategoriaDTOList();
         return Ok(categoriasDto);
     }
 
     [HttpGet("pagination")]
-    public ActionResult<IEnumerable<CategoriaDTO>> Get([FromQuery] CategoriasParameters categoriasParameters)
+    public async Task<ActionResult<IEnumerable<CategoriaDTO>>> GetAsync([FromQuery] CategoriasParameters categoriasParameters)
     {
-        var categorias = _uof.CategoriaRepository.GetCategorias(categoriasParameters);
+        var categorias = await _uof.CategoriaRepository.GetCategoriasAsync(categoriasParameters);
 
         var metadata = new
         {
@@ -66,11 +56,11 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpGet("filter/nome/pagination")]
-    public ActionResult<IEnumerable<CategoriaDTO>> GetCategoriasFiltradas(
+    public async Task<ActionResult<IEnumerable<CategoriaDTO>>> GetCategoriasFiltradasAsync(
                                  [FromQuery] CategoriasFiltroNome categoriasFiltro)
     {
-        var categoriasFiltradas = _uof.CategoriaRepository
-                                     .GetCategoriasFiltroNome(categoriasFiltro);
+        var categoriasFiltradas = await _uof.CategoriaRepository
+                                     .GetCategoriasFiltroNomeAsync(categoriasFiltro);
 
         return ObterCategorias(categoriasFiltradas);
     }
@@ -93,9 +83,9 @@ public class CategoriasController : ControllerBase
 
 
     [HttpGet("{id:int}", Name = "ObterCategoria")]
-    public ActionResult<CategoriaDTO> Get(int id)
+    public async Task<ActionResult<CategoriaDTO>> GetAsync(int id)
     {
-        var categoria = _uof.CategoriaRepository.GetAsync(c => c.CategoriaId == id);
+        var categoria = await _uof.CategoriaRepository.GetAsync(c => c.CategoriaId == id);
 
         if (categoria is null)
         {
@@ -103,20 +93,13 @@ public class CategoriasController : ControllerBase
             return NotFound($"Categoria com id= {id} não encontrada...");
         }
 
-        //Trecho substituido por => var categoriaDto = categoria.ToCategoriaDTO();
-        //var categoriaDto = new CategoriaDTO()
-        //{
-        //    CategoriaId = categoria.CategoriaId,
-        //    Nome = categoria.Nome,
-        //    ImagemUrl = categoria.ImagemUrl
-        //};
         var categoriaDto = categoria.ToCategoriaDTO();
 
         return Ok(categoria);
     }
 
     [HttpPost]
-    public ActionResult<CategoriaDTO> Post(CategoriaDTO categoriaDto)
+    public async Task<ActionResult<CategoriaDTO>> PostAsync(CategoriaDTO categoriaDto)
     {
         if (categoriaDto is null)
         {
@@ -124,26 +107,11 @@ public class CategoriasController : ControllerBase
             return BadRequest("Dados inválidos");
         }
 
-        //Trecho substituido por => var categoria = categoriaDto.ToCategoria();
-        //var categoria = new Categoria()
-        //{
-        //    CategoriaId = categoriaDto.CategoriaId,
-        //    Nome = categoriaDto.Nome,
-        //    ImagemUrl = categoriaDto.ImagemUrl
-        //};
-
         var categoria = categoriaDto.ToCategoria();
 
         var newCategoria = _uof.CategoriaRepository.Create(categoria);
-        _uof.Commit();
+        await _uof.CommitAsync();
 
-        //Trecho substituido por => var newCategoriaDto = newCategoria.ToCategoriaDTO();
-        //var newCategoriaDto = new CategoriaDTO()
-        //{
-        //    CategoriaId = newCategoria.CategoriaId,
-        //    Nome = newCategoria.Nome,
-        //    ImagemUrl = newCategoria.ImagemUrl
-        //};
         var newCategoriaDto = newCategoria.ToCategoriaDTO();
 
 
@@ -151,7 +119,7 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult<CategoriaDTO> Put(int id, CategoriaDTO categoriaDto)
+    public async Task<ActionResult<CategoriaDTO>> PutAsync(int id, CategoriaDTO categoriaDto)
     {
         if (id != categoriaDto.CategoriaId)
         {
@@ -159,33 +127,20 @@ public class CategoriasController : ControllerBase
             return BadRequest("Dados inválidos");
         }
 
-        //Trecho substituido por =>  var categoria = categoriaDto.ToCategoria();
-        //var categoria = new Categoria()
-        //{
-        //    CategoriaId = categoriaDto.CategoriaId,
-        //    Nome = categoriaDto.Nome,
-        //    ImagemUrl = categoriaDto.ImagemUrl
-        //};
         var categoria = categoriaDto.ToCategoria();
 
         var categoriaUpdate = _uof.CategoriaRepository.Update(categoria);
-        _uof.Commit();
+        await _uof.CommitAsync();
 
-        //var categoriaUpdateDto = new Categoria()
-        //{
-        //    CategoriaId = categoriaUpdate.CategoriaId,
-        //    Nome = categoriaUpdate.Nome,
-        //    ImagemUrl = categoriaUpdate.ImagemUrl
-        //};
         var categoriaUpdateDto = categoriaUpdate.ToCategoriaDTO();
 
         return Ok(categoria);
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult<CategoriaDTO> Delete(int id)
+    public async Task<ActionResult<CategoriaDTO>> DeleteAsync(int id)
     {
-        var categoria = _uof.CategoriaRepository.GetAsync(c => c.CategoriaId == id);
+        var categoria = await _uof.CategoriaRepository.GetAsync(c => c.CategoriaId == id);
 
         if (categoria == null)
         {
@@ -194,14 +149,8 @@ public class CategoriasController : ControllerBase
         }
 
         var categoriaExcluida = _uof.CategoriaRepository.Delete(categoria);
-        _uof.Commit();
+        await _uof.CommitAsync();
 
-        //var categoriaExcluidaDto = new CategoriaDTO()
-        //{
-        //    CategoriaId = categoriaExcluida.CategoriaId,
-        //    Nome = categoriaExcluida.Nome,
-        //    ImagemUrl = categoriaExcluida.ImagemUrl
-        //};
         var categoriaExcluidaDto = categoriaExcluida.ToCategoriaDTO();
 
         return Ok(categoriaExcluida);
