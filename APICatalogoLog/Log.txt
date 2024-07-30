@@ -174,3 +174,14 @@ FROM `Categorias` AS `c`
 Information: 20101 - Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
 SELECT `c`.`CategoriaId`, `c`.`ImagemUrl`, `c`.`Nome`
 FROM `Categorias` AS `c`
+Information: 14 - Now listening on: https://localhost:7278
+Information: 14 - Now listening on: http://localhost:5066
+Information: 0 - Application started. Press Ctrl+C to shut down.
+Information: 0 - Hosting environment: Development
+Information: 0 - Content root path: C:\Users\rayssa.magalhaes\Documents\Estudos\APICatalogo\APICatalogo
+Information: 20101 - Executed DbCommand (35ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT `c`.`CategoriaId`, `c`.`ImagemUrl`, `c`.`Nome`
+FROM `Categorias` AS `c`
+Information: 20101 - Executed DbCommand (12ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+SELECT `c`.`CategoriaId`, `c`.`ImagemUrl`, `c`.`Nome`
+FROM `Categorias` AS `c`
