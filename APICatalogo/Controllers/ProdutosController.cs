@@ -30,6 +30,7 @@ public class ProdutosController : ControllerBase
         _logger = logger;
     }
 
+    /*Envio via Url: "http://localhost:xxx/produtos?pageNumber=1&pageSize=3"   */
     [HttpGet("produtos/{id}")]
     public ActionResult<IEnumerable<ProdutoDTO>> GetProdutosPorCategoria(int id)
     {
